@@ -2,38 +2,115 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <title>Endless Lightbulb</title>
 
     <style>
-      html, body {
+      :root {
+        --bg: #ffffff;
+        --fade-ms: 520ms;
+      }
+
+      html,
+      body {
         margin: 0;
         height: 100%;
-        background: #ffffff;
+        background: var(--bg);
         overflow: hidden;
+      }
+
+      body {
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
       }
 
       .wrap {
         height: 100%;
         display: grid;
         place-items: center;
+        background: var(--bg);
       }
 
       video {
         width: min(92vw, 92vh);
-        height: auto;
         max-height: 92vh;
-        background: #ffffff;
+        height: auto;
         display: block;
+        background: var(--bg);
+
+        opacity: 0;
+        transform: scale(0.99);
+        filter: blur(0.2px);
+
+        transition:
+          opacity var(--fade-ms) ease,
+          transform var(--fade-ms) ease,
+          filter var(--fade-ms) ease;
+
+        will-change: opacity, transform, filter;
+      }
+
+      video.is-ready {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
       }
     </style>
   </head>
 
   <body>
     <div class="wrap">
-      <video autoplay muted loop playsinline preload="auto">
-        <source src="endless_lightbulb-site_vid_whitebg.mp4" type="video/mp4" />
+      <video
+        id="heroVideo"
+        autoplay
+        muted
+        loop
+        playsinline
+        webkit-playsinline
+        preload="auto"
+        poster="poster.png"
+        disablepictureinpicture
+      >
+        <source
+          src="endless_lightbulb-site_vid_whitebg.mp4"
+          type="video/mp4"
+        />
       </video>
     </div>
+
+    <script>
+      (function () {
+        const v = document.getElementById("heroVideo");
+        if (!v) return;
+
+        let revealed = false;
+        const reveal = () => {
+          if (revealed) return;
+          revealed = true;
+          requestAnimationFrame(() => v.classList.add("is-ready"));
+        };
+
+        v.addEventListener("loadeddata", reveal, { once: true });
+        v.addEventListener("canplay", reveal, { once: true });
+        v.addEventListener("playing", reveal, { once: true });
+
+        const tryPlay = async () => {
+          try {
+            const p = v.play();
+            if (p && typeof p.then === "function") await p;
+          } catch (_) {}
+        };
+
+        tryPlay();
+        v.addEventListener("loadedmetadata", tryPlay, { once: true });
+
+        setTimeout(reveal, 900);
+        v.addEventListener("error", reveal, { once: true });
+      })();
+    </script>
   </body>
 </html>
