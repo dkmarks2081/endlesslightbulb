@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Endless Lightbulb</title>
+
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+        background: #ffffff;
+        overflow: hidden;
+      }
+
+      .wrap {
+        height: 100%;
+        display: grid;
+        place-items: center;
+      }
+
+      video {
+        width: min(92vw, 92vh);
+        height: auto;
+        max-height: 92vh;
+        background: #ffffff;
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src="endless_lightbulb-site_vid_whitebg.mp4" type="video/mp4" />
+      </video>
+    </div>
+  </body>
+</html>
