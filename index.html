@@ -2,20 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Endless Lightbulb</title>
 
-    <style>
-      :root {
-        --bg: #ffffff;
-        --fade-ms: 520ms;
-      }
+    <link
+      rel="preload"
+      as="video"
+      href="endless_lightbulb-site_vid_whitebg-5s.mp4?v=8"
+      type="video/mp4"
+    />
 
-      html,
-      body {
+    <style>
+      :root { --bg:#ffffff; --fade-ms:520ms; }
+
+      html, body {
         margin: 0;
         height: 100%;
         background: var(--bg);
@@ -46,11 +46,7 @@
         transform: scale(0.99);
         filter: blur(0.2px);
 
-        transition:
-          opacity var(--fade-ms) ease,
-          transform var(--fade-ms) ease,
-          filter var(--fade-ms) ease;
-
+        transition: opacity var(--fade-ms) ease, transform var(--fade-ms) ease, filter var(--fade-ms) ease;
         will-change: opacity, transform, filter;
       }
 
@@ -75,10 +71,7 @@
         poster="poster.png"
         disablepictureinpicture
       >
-        <source
-          src="endless_lightbulb-site_vid_whitebg-5s.mp4"
-          type="video/mp4"
-        />
+        <source src="endless_lightbulb-site_vid_whitebg-5s.mp4?v=8" type="video/mp4" />
       </video>
     </div>
 
