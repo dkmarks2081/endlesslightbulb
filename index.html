@@ -13,7 +13,7 @@
     <link
       rel="preload"
       as="video"
-      href="endless_lightbulb-site_vid_whitebg_ios_ultra.mp4?v=1"
+      href="endless_lightbulb-site_vid_whitebg_ios_ultra.mp4?v=2"
       type="video/mp4"
     />
 
@@ -44,12 +44,32 @@
         background: var(--bg);
       }
 
-      video {
+      /* This is the key: an instant inline “mini poster” so there’s no white flash. */
+      .stage {
+        position: relative;
         width: min(92vw, 92vh);
         max-height: 92vh;
-        height: auto;
-        display: block;
-        background: var(--bg);
+        aspect-ratio: 1 / 1;
+
+        /* Tiny embedded grayscale placeholder (loads instantly) */
+        background-image: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARATEhYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/wAARCAAyADIDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAQFBv/EACIQAAICAgIBBQEAAAAAAAAAAAECAwQREiEABTFBIlEUMv/EABUBAQEAAAAAAAAAAAAAAAAAAAID/8QAGhEBAAIDAQAAAAAAAAAAAAAAAQIRIQMSMf/aAAwDAQACEQMRAD8A9a7tP0jA5p0qk2H3cIu9mQpVwzq0l4m0lH0bZlYxk2o5u0Z2y8a6cKQ9yG7mR2F2wqG8b8Y5o8yqkK3tJr4p9S4m4qg4s9QvYl8fPp0Yk8bCw1b8y9Xyq1q5dJm0lZxq7eY5a7qW8w7gq8uW3OaWm0o0o7vJ9k0m9y2p6y2Q0o0uGvH8m4n8E3Pq2c4m1g8T6k3mQw2Jr3Zz+gHq2dYp0bqKfG1h1mM3mW6Kqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqkqk//Z");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: var(--bg);
+      }
+
+      /* Once the real poster loads, swap background to poster.png (higher quality). */
+      .stage.poster-ready {
+        background-image: url("poster.png");
+      }
+
+      video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
 
         opacity: 0;
         transform: scale(0.99);
@@ -73,28 +93,36 @@
 
   <body>
     <div class="wrap">
-      <video
-        id="heroVideo"
-        autoplay
-        muted
-        loop
-        playsinline
-        webkit-playsinline
-        preload="auto"
-        poster="poster.png"
-        disablepictureinpicture
-      >
-        <source
-          src="endless_lightbulb-site_vid_whitebg_ios_ultra.mp4?v=1"
-          type="video/mp4"
-        />
-      </video>
+      <div class="stage" id="stage">
+        <video
+          id="heroVideo"
+          autoplay
+          muted
+          loop
+          playsinline
+          webkit-playsinline
+          preload="auto"
+          poster="poster.png"
+          disablepictureinpicture
+        >
+          <source
+            src="endless_lightbulb-site_vid_whitebg_ios_ultra.mp4?v=2"
+            type="video/mp4"
+          />
+        </video>
+      </div>
     </div>
 
     <script>
       (function () {
         const v = document.getElementById("heroVideo");
-        if (!v) return;
+        const stage = document.getElementById("stage");
+        if (!v || !stage) return;
+
+        // Load the real poster ASAP; once loaded, stage swaps to poster.png
+        const img = new Image();
+        img.onload = () => stage.classList.add("poster-ready");
+        img.src = "poster.png";
 
         let revealed = false;
         const reveal = () => {
@@ -117,6 +145,7 @@
         tryPlay();
         v.addEventListener("loadedmetadata", tryPlay, { once: true });
 
+        // Safety: never stay hidden forever
         setTimeout(reveal, 900);
         v.addEventListener("error", reveal, { once: true });
       })();
